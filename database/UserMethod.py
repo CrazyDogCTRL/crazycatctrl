@@ -130,3 +130,25 @@ class User:
             else:
                 print("Аккаунт с указанными данными не существует.")
                 return None
+
+    class GetNumberById:
+        def __call__(self, request, cursor, conn):
+            user_id = request['id']
+            cursor.execute("SELECT number FROM users WHERE id = ?", (user_id,))
+            number = cursor.fetchone()
+            if number:
+                return number[0]
+            else:
+                print("Пользователь с указанным ID не существует.")
+                return None
+
+    class GetEmailById:
+        def __call__(self, request, cursor, conn):
+            user_id = request['id']
+            cursor.execute("SELECT email FROM users WHERE id = ?", (user_id,))
+            email = cursor.fetchone()
+            if email:
+                return email[0]
+            else:
+                print("Пользователь с указанным ID не существует.")
+                return None

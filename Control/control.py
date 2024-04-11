@@ -1,8 +1,10 @@
 from database.UserMethod import *
 from BankAccount.BankAccount import bank_account
 from Control.Requests import *
+from logs.logs import *
 
 get_request = Requests()
+logs = Logs()
 
 
 class Control:
@@ -171,6 +173,30 @@ class Control:
                 return {"status": "failed"}
             pass
 
+    class Reverserequest:
+        def __init__(self, user_analyzer):
+            self.user_analyzer = user_analyzer
+
+        def __call__(self, request, session):
+            control = Control()
+            log_id = request.get("id")
+            log_to_reverse = logs.get_log_by_id(log_id)
+            user_request = log_to_reverse[0]
+            server_response = log_to_reverse[1]
+            log_session = log_to_reverse[2]
+            if user_request.get("method") == "Sendmoney" and server_response.get("status") == "success":
+                giver_number = self.user_analyzer(get_request.get_number_by_id(server_response.get("id_giver")))
+                user_request["phoneNumber"] = giver_number
+                log_session["email"] = self.user_analyzer(get_request.get_email_by_id(server_response.get("id_receiver")))
+                return control.treatment_request(user_request, log_session)
+            else:
+                if user_request.get("method") != "Sendmoney":
+                    print("Попытка откатить запрос, не являющийся запросом на отправку денег")
+                    return {"status": "failed"}
+                elif user_request.get("status") != "success":
+                    print("Попытка откатить невалидный запрос")
+                    return {"status": "failed"}
+
     @staticmethod
     def pay_credit():
         pay_credit_request = get_request.pay_credit_request()
@@ -183,21 +209,12 @@ class Control:
 
 
 third_request = {
-    'method': 'Closeaccount',
-    'kind_of_account': 'Debit',
+    'method': 'Reverserequest',
+    "id": 68
 }
 
-fourth_request = {
-    'method': 'Getbalance',
-    'kind_of_account': 'Debit',
-}
+session = {"start_time": 1711897362.3167593, "email": "test@test.com"}
 
-session1 = {
-    "email": "bebra.hohol@gmail.com"
-}
 # Для readme - здесь можно проверить, как control реагирует на запросы из интерфейса (вручную)
-# control = Control()
-# control.treatment_request(first_request, session1)
-# control.treatment_request(second_request, session1)
-# control.treatment_request(third_request, session1)
-# control.treatment_request(second_request, session1)
+control = Control()
+control.treatment_request(third_request, session)

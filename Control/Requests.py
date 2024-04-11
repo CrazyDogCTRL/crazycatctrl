@@ -93,3 +93,15 @@ class Requests:
             'request': 'GetBalance',
             'IdentificationAccount': id_giver
         }
+
+    def get_number_by_id(self, id_user):
+        return {
+            "request": "GetNumberById",
+            "id": id_user
+        }
+
+    def get_email_by_id(self, id_user):
+        return {
+            "request": "GetEmailById",
+            "id": id_user
+        }

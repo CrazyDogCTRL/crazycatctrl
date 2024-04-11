@@ -3,6 +3,7 @@ import sqlite3
 import json
 from datetime import datetime, timedelta
 
+
 class Logs:
     def __init__(self):
         db_file = os.path.join(os.path.dirname(__file__), 'requests.db')
@@ -23,11 +24,9 @@ class Logs:
         self.conn.commit()
 
     def add_log(self, request, response, session=None):
-        current_time = datetime.now()
-        if current_time - self.last_cleanup_time >= timedelta(weeks=1):
-            self.cleanup_database()
-            self.last_cleanup_time = current_time
-        self.cursor.execute("INSERT INTO logs (request, response, session) VALUES (?, ?, ?)", (json.dumps(request), json.dumps(response), json.dumps(session)))
+        self.check_and_cleanup_logs()
+        self.cursor.execute("INSERT INTO logs (request, response, session) VALUES (?, ?, ?)",
+                            (json.dumps(request), json.dumps(response), json.dumps(session)))
         self.conn.commit()
 
     def get_log_by_id(self, log_id):
@@ -57,16 +56,9 @@ class Logs:
     def close(self):
         self.conn.close()
 
-# Пример использования
-# if __name__ == "__main__":
-#     logs = Logs()
-#
-#     # Предположим, что это пример использования класса и добавление логов происходит регулярно
-#     logs.add_log({'example_request': 'data'}, {'example_response': 'data'})
-#     logs.add_log({'example_request': 'data'}, {'example_response': 'data'})
-#     logs.add_log({'example_request': 'data'}, {'example_response': 'data'})
-#
-#     # Выполняем очистку базы данных (если прошла неделя с момента последней очистки)
-#     logs.cleanup_database()
-#
-#     logs.close()
+    def check_and_cleanup_logs(self):
+        current_time = datetime.now()
+        if current_time - self.last_cleanup_time >= timedelta(weeks=1):
+            self.cleanup_database()
+            self.last_cleanup_time = current_time
+
