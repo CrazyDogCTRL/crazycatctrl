@@ -215,6 +215,5 @@ third_request = {
 
 session = {"start_time": 1711897362.3167593, "email": "test@test.com"}
 
-# Для readme - здесь можно проверить, как control реагирует на запросы из интерфейса (вручную)
 control = Control()
 control.treatment_request(third_request, session)

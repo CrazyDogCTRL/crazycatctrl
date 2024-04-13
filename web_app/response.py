@@ -9,7 +9,6 @@ logs = Logs()
 control = Control()
 active_sessions = {}
 COOKIE_NAME = "session_id"
-# Глобальные переменные
 HOST = ("localhost", 7777)
 
 URLS = {

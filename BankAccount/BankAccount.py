@@ -94,7 +94,6 @@ class BankAccount:
 
 bank_account = BankAccount()
 
-# Запрос на открытие депозитного счета
 request = {
     'kind_of_account': 'Debit',
     'request': 'OpenAccount',
