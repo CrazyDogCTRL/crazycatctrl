@@ -2,7 +2,7 @@ import socket
 from response import ResponseGenerator
 import multiprocessing
 
-HOST = ("localhost", 7777)
+HOST = ("psina.siberian-project.ru", 7777)
 
 
 def run():
